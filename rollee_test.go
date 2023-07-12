@@ -15,11 +15,13 @@ func TestFold(t *testing.T) {
 	l := List{1, refValues}
 	res := Fold(0, sum, l)
 	assert.Equal(t, 10, res[1])
+
 	res = Fold(1, sum, l)
 	assert.Equal(t, 11, res[1])
 
 	res = Fold(0, mul, l)
 	assert.Equal(t, 0, res[1])
+	
 	res = Fold(1, mul, l)
 	assert.Equal(t, 24, res[1])
 }
