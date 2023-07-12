@@ -23,7 +23,18 @@ func Fold(initialValue int, f func(int, int) int, l List) map[ID]int {
 }
 
 func FoldChan(initialValue int, f func(int, int) int, ch chan List) map[ID]int {
-	panic("not implemented")
+	m := make(map[ID]int)	
+	
+	for myList := range ch {
+		result := Fold(initialValue, f, myList)
+		
+		if val, ok := m[myList.ID] ; ok {
+			m[myList.ID] = f(val,result[myList.ID])
+		} else { 
+		m[myList.ID] = result[myList.ID]
+	}
+}
+	return m
 }
 
 func FoldChanX(initialValue int, f func(int, int) int, chs ...chan List) map[ID]int {
