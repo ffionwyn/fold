@@ -1,5 +1,7 @@
 package rollee
 
+import "sync"
+
 type ID = int
 
 // We suppose L is always valid with len (l.Values) >= 1).
@@ -38,21 +40,25 @@ func FoldChan(initialValue int, f func(int, int) int, ch chan List) map[ID]int {
 }
 
 func FoldChanX(initialValue int, f func(int, int) int, chs ...chan List) map[ID]int {
-	m := make(map[ID]int)	
+	m := make(map[ID]int)
+	var mutex sync.Mutex	
 	
-  for _, ch := range chs {
-
+	wg := sync.WaitGroup{}
+    	for _, ch := range chs {
+	wg.Add(1)
 	go func(ch chan List) {
-
+		defer wg.Done()
 		for myList := range ch {
 			result := Fold(initialValue, f, myList)
-
-			for id, value := range result {
+		for id, value := range result {
+				mutex.Lock()
 				m[id] = f(m[id], value)
+				mutex.Unlock()
 			}
 		}
 	}(ch)
   }
+  wg.Wait()
   return m
 }
 
