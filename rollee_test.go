@@ -92,4 +92,4 @@ func TestFoldChanX(t *testing.T) {
 		res := FoldChanX(0, sum, chs...)
 		assert.Equal(t, 60, res[0])
 	})
-}
+} 

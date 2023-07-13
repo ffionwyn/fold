@@ -40,15 +40,19 @@ func FoldChan(initialValue int, f func(int, int) int, ch chan List) map[ID]int {
 func FoldChanX(initialValue int, f func(int, int) int, chs ...chan List) map[ID]int {
 	m := make(map[ID]int)	
 	
-    for i := range chs {
-        chs[i] = make(chan List)
-		go func(ch chan List) {
-			result := FoldChan(initialValue, f, ch)
-			for value := range result {
-			m[value.ID] = value.Value
+  for _, ch := range chs {
+
+	go func(ch chan List) {
+
+		for myList := range ch {
+			result := Fold(initialValue, f, myList)
+
+			for id, value := range result {
+				m[id] = f(m[id], value)
 			}
-	}(chs[i])
-			}
-	return m
+		}
+	}(ch)
+  }
+  return m
 }
 
